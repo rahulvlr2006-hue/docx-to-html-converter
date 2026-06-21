@@ -4,79 +4,19 @@ from converter import convert_docx_to_html
 from tkinterweb import HtmlFrame
 import os
 
+# -----------------------
+# SETTINGS
+# -----------------------
 
-# -----------------------
-# VARIABLES
-# -----------------------
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
 selected_file = ""
-
 
 # -----------------------
 # FUNCTIONS
 # -----------------------
-def show_about():
 
-    about_window = ctk.CTkToplevel(app)
-
-    about_window.title("About")
-    about_window.geometry("400x300")
-
-    # Make it stay on top
-    about_window.transient(app)
-
-    # Focus the window
-    about_window.focus()
-
-    # Grab all input until closed
-    about_window.grab_set()
-
-    title = ctk.CTkLabel(
-        about_window,
-        text="DOCX TO HTML Converter",
-        font=("Arial", 20, "bold")
-    )
-    title.pack(pady=15)
-
-    version = ctk.CTkLabel(
-        about_window,
-        text="Version 1.0"
-    )
-    version.pack(pady=5)
-
-    developer = ctk.CTkLabel(
-        about_window,
-        text="Developed by Rahul"
-    )
-    developer.pack(pady=5)
-
-    close_button = ctk.CTkButton(
-        about_window,
-        text="Close",
-        command=about_window.destroy
-    )
-    close_button.pack(pady=15)
-def preview_html():
-
-    global selected_file
-
-    if not selected_file:
-
-        status_label.configure(
-            text="Status: Please select a DOCX file"
-        )
-        return
-
-    html = convert_docx_to_html(selected_file)
-
-    preview_window = ctk.CTkToplevel(app)
-    preview_window.title("HTML Preview")
-    preview_window.geometry("1000x700")
-
-    browser = HtmlFrame(preview_window)
-    browser.pack(fill="both", expand=True)
-
-    browser.load_html(html)
 def change_theme(choice):
     if choice == "Dark":
         ctk.set_appearance_mode("dark")
@@ -92,7 +32,6 @@ def browse_file():
     )
 
     if file_path:
-
         selected_file = file_path
 
         file_box.configure(state="normal")
@@ -114,6 +53,7 @@ def clear_selection():
     file_box.delete("1.0", "end")
     file_box.insert("1.0", "No file selected")
     file_box.configure(state="disabled")
+
     progress_bar.set(0)
 
     status_label.configure(
@@ -130,6 +70,7 @@ def refresh_file():
     file_box.delete("1.0", "end")
     file_box.insert("1.0", "No file selected")
     file_box.configure(state="disabled")
+
     progress_bar.set(0)
 
     status_label.configure(
@@ -137,23 +78,47 @@ def refresh_file():
     )
 
 
-def convert_file():
+def preview_html():
 
     global selected_file
 
     if not selected_file:
-
         status_label.configure(
             text="Status: Please select a DOCX file"
         )
         return
 
-    progress_bar.set(0.2)
+    html = convert_docx_to_html(selected_file)
+
+    preview_window = ctk.CTkToplevel(app)
+    preview_window.title("HTML Preview")
+    preview_window.geometry("1000x700")
+
+    preview_window.transient(app)
+    preview_window.focus()
+
+    browser = HtmlFrame(preview_window)
+    browser.pack(fill="both", expand=True)
+
+    browser.load_html(html)
+
+
+def convert_file():
+
+    global selected_file
+
+    if not selected_file:
+        status_label.configure(
+            text="Status: Please select a DOCX file"
+        )
+        return
+
+    progress_bar.set(0.3)
     app.update()
 
     html = convert_docx_to_html(selected_file)
 
-    progress_bar.set(0.6)
+    progress_bar.set(0.7)
     app.update()
 
     save_path = filedialog.asksaveasfilename(
@@ -185,12 +150,46 @@ def open_html():
         os.startfile(html_file)
 
 
-# -----------------------
-# APP SETTINGS
-# -----------------------
+def show_about():
 
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+    about_window = ctk.CTkToplevel(app)
+
+    about_window.title("About")
+    about_window.geometry("400x250")
+
+    about_window.transient(app)
+    about_window.grab_set()
+
+    title = ctk.CTkLabel(
+        about_window,
+        text="DOCX TO HTML Converter",
+        font=("Arial", 20, "bold")
+    )
+    title.pack(pady=15)
+
+    version = ctk.CTkLabel(
+        about_window,
+        text="Version 1.1"
+    )
+    version.pack(pady=5)
+
+    developer = ctk.CTkLabel(
+        about_window,
+        text="Developed by Rahul"
+    )
+    developer.pack(pady=5)
+
+    close_button = ctk.CTkButton(
+        about_window,
+        text="Close",
+        command=about_window.destroy
+    )
+    close_button.pack(pady=20)
+
+
+# -----------------------
+# APP
+# -----------------------
 
 app = ctk.CTk()
 
@@ -203,7 +202,6 @@ app.title("DOCX TO HTML Converter")
 app.geometry("900x650")
 app.resizable(False, False)
 
-
 # -----------------------
 # TITLE
 # -----------------------
@@ -215,9 +213,8 @@ title_label = ctk.CTkLabel(
 )
 title_label.pack(pady=20)
 
-
 # -----------------------
-# STATUS LABEL
+# STATUS
 # -----------------------
 
 status_label = ctk.CTkLabel(
@@ -225,7 +222,6 @@ status_label = ctk.CTkLabel(
     text="Status: Ready"
 )
 status_label.pack(pady=10)
-
 
 # -----------------------
 # FILE SECTION
@@ -247,9 +243,8 @@ file_box.pack(pady=10)
 file_box.insert("1.0", "No file selected")
 file_box.configure(state="disabled")
 
-
 # -----------------------
-# BUTTON FRAME
+# BUTTONS
 # -----------------------
 
 button_frame = ctk.CTkFrame(app)
@@ -260,12 +255,7 @@ browse_button = ctk.CTkButton(
     text="📂 Browse DOCX",
     command=browse_file
 )
-browse_button.grid(
-    row=0,
-    column=0,
-    padx=5,
-    pady=5
-)
+browse_button.grid(row=0, column=0, padx=5)
 
 refresh_button = ctk.CTkButton(
     button_frame,
@@ -273,12 +263,7 @@ refresh_button = ctk.CTkButton(
     width=50,
     command=refresh_file
 )
-refresh_button.grid(
-    row=0,
-    column=1,
-    padx=5,
-    pady=5
-)
+refresh_button.grid(row=0, column=1, padx=5)
 
 delete_button = ctk.CTkButton(
     button_frame,
@@ -286,16 +271,10 @@ delete_button = ctk.CTkButton(
     width=50,
     command=clear_selection
 )
-delete_button.grid(
-    row=0,
-    column=2,
-    padx=5,
-    pady=5
-)
-
+delete_button.grid(row=0, column=2, padx=5)
 
 # -----------------------
-# ACTION BUTTONS
+# ACTIONS
 # -----------------------
 
 action_frame = ctk.CTkFrame(app)
@@ -306,37 +285,24 @@ convert_button = ctk.CTkButton(
     text="⚡ Convert",
     command=convert_file
 )
-convert_button.grid(
-    row=0,
-    column=0,
-    padx=10
+convert_button.grid(row=0, column=0, padx=10)
+
+preview_button = ctk.CTkButton(
+    action_frame,
+    text="👁 Preview",
+    command=preview_html
 )
+preview_button.grid(row=0, column=1, padx=10)
 
 open_button = ctk.CTkButton(
     action_frame,
     text="🌐 Open HTML",
     command=open_html
 )
-open_button.grid(
-    row=0,
-    column=1,
-    padx=10
-)
-preview_button = ctk.CTkButton(
-    action_frame,
-    text="👁 Preview",
-    command=preview_html
-)
-
-preview_button.grid(
-    row=0,
-    column=2,
-    padx=10
-)
-
+open_button.grid(row=0, column=2, padx=10)
 
 # -----------------------
-# THEME SWITCHER
+# THEME
 # -----------------------
 
 theme_label = ctk.CTkLabel(
@@ -354,6 +320,28 @@ theme_menu.pack()
 
 theme_menu.set("Dark")
 
+# -----------------------
+# ABOUT
+# -----------------------
+
+about_button = ctk.CTkButton(
+    app,
+    text="ℹ About",
+    command=show_about
+)
+about_button.pack(pady=10)
+
+# -----------------------
+# PROGRESS BAR
+# -----------------------
+
+progress_bar = ctk.CTkProgressBar(
+    app,
+    width=400
+)
+progress_bar.pack(pady=15)
+
+progress_bar.set(0)
 
 # -----------------------
 # FOOTER
@@ -361,28 +349,12 @@ theme_menu.set("Dark")
 
 footer = ctk.CTkLabel(
     app,
-    text="Version 1.0"
+    text="Version 1.1"
 )
-footer.pack(pady=20)
-about_button = ctk.CTkButton(
-    app,
-    text="ℹ About",
-    command=show_about
-)
-
-about_button.pack(pady=10)
-
+footer.pack(pady=10)
 
 # -----------------------
-# RUN APP
+# RUN
 # -----------------------
 
-progress_bar = ctk.CTkProgressBar(
-    app,
-    width=400
-)
-
-progress_bar.pack(pady=10)
-
-progress_bar.set(0)
 app.mainloop()
